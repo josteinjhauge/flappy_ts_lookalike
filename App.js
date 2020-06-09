@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity, Alert } from 'react-native';
-import Constants from './Constants';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import {GameEngine} from 'react-native-game-engine';
 import Matter from 'matter-js';
-import Charecter from './Charecter';
-import Wall from './Wall';
-import Physics from './Physics';
+
+import Constants from './components/Constants';
+import Charecter from './components/Charecter';
+import Wall from './components/Wall';
+import Physics from './components/Physics';
+import Score from './components/Score';
 
 export const randomSpace = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -19,14 +21,8 @@ export const makePipes = () => {
   if(Math.random() < 0.5){
     sizes = sizes.reverse();
   }
-
   return sizes;
 };
-
-export const calcScore = () => {
-  // some functionality here
-  return score;
-}
 
 export default class App extends Component {
   constructor(props){
@@ -50,7 +46,6 @@ export default class App extends Component {
         }
       }
     });
-    let score = 0; // TODO: add code for callculating score here
 
     let floor = Matter.Bodies.rectangle(Constants.MAX_WIDTH / 2, Constants.MAX_HEIGHT - 25, Constants.MAX_WIDTH, 50, { isStatic: true });
     let roof = Matter.Bodies.rectangle(Constants.MAX_WIDTH / 2, 25, Constants.MAX_WIDTH, 50, { isStatic: true });
@@ -87,8 +82,12 @@ export default class App extends Component {
       this.setState({
         running: false
       })
-      this.pairs
-      console.log('Game Over')
+      try{
+        console.log('Game Over')
+      }catch(e){
+        console.log.error('something went wrong' + e)
+      }
+      
     }
   }
 
@@ -113,7 +112,7 @@ export default class App extends Component {
         </GameEngine>
         {!this.state.running && <TouchableOpacity onPress={this.reset} style={styles.btnFullscreen}>
             <View style={styles.fullscreen}>
-              <Text style={styles.gaemOverText}>Game Over</Text>
+              <Text style={styles.gameOverText}>Game Over</Text>
             </View>
           </TouchableOpacity>}
       </View>
