@@ -2,7 +2,7 @@
 export default Images = {
     background: require('./images/background2.jpg'), // alter to actually use background image
     // Floor image should be a square
-    floor: require('./images/floor.png'),
+    floor: require('./images/stone.jpg'),
     // ObstacleCore should have the size 160
     pipeCore: require('./images/pipe_core.png'),
     // ObstacleTop should have size: 205x95

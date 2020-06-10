@@ -16,10 +16,10 @@ export const resetPipes = () => {
 }
 
 export const generatePipes = () => {
-    let toppipeHeight = randomSpace(100, (Constants.MAX_HEIGHT / 2) - 100);
-    let BottompipeHeight = Constants.MAX_HEIGHT - toppipeHeight - Constants.GAP_SIZE - 50;
+    let topPipeHeight = randomSpace(100, (Constants.MAX_HEIGHT / 2) - 100);
+    let BottomPipeHeight = Constants.MAX_HEIGHT - topPipeHeight - Constants.GAP_SIZE - 50;
 
-    let sizes = [toppipeHeight, BottompipeHeight];
+    let sizes = [topPipeHeight, BottomPipeHeight];
 
     if(Math.random() < 0.5){
         sizes = sizes.reverse();
@@ -95,31 +95,27 @@ const Physics = (entities, {touches, time, dispatch}) => {
     let engine = entities.physics.engine;
     let world = entities.physics.world;
     let character = entities.character.body;
-    console.log(entities);
+   
 
     // Move character
-    let prevTouches = false; // to prevent multifingerPress
-    touches.filter(_t => _t.type === 'press').forEach(_t => {
-        if(!prevTouches){
-            if(world.gravity.y === 0.0){
-                // only applies to the first press where gravity is set to 0.0
-                world.gravity.y = 1.2;
-
-                // add pipes
-                addPipesLocation((Constants.MAX_WIDTH * 2) - (Constants.PIPE_WIDTH / 2), world, entities)
-                addPipesLocation((Constants.MAX_WIDTH * 3) - (Constants.PIPE_WIDTH / 2), world, entities)
-            }
-            prevTouches = true;
-            // Old physics
-            // Matter.Body.applyForce( bird, bird.position, {x: 0.00, y: -0.05});
-            Matter.Body.setVelocity(character, {
-                x: character.velocity.x,
-                y: -10
-            });
+    let hadTouches = false;
+touches.filter(t => t.type === "press").forEach(t => {
+    if (!hadTouches){
+        if (world.gravity.y === 0.0){
+            // first press really
+            world.gravity.y = 1.2;
+            // alt før add pipes funket fint
+            addPipesLocation((Constants.MAX_WIDTH * 2) - (Constants.PIPE_WIDTH / 2), world, entities);
+            addPipesLocation((Constants.MAX_WIDTH * 3) - (Constants.PIPE_WIDTH / 2), world, entities);
         }
-    });
-
-    Matter.Engine.update(engine, time.delta);
+        hadTouches = true;
+        // Old method: Matter.Body.applyForce( bird, bird.position, {x: 0.00, y: -0.05});
+        Matter.Body.setVelocity(character, {
+          x: character.velocity.x,
+          y: -8.5
+        });
+    }
+});
 
     Object.keys(entities).forEach(key => {
         if(key.indexOf('pipe') === 0 && entities.hasOwnProperty(key)){
@@ -128,27 +124,27 @@ const Physics = (entities, {touches, time, dispatch}) => {
                 y: 0
             });
         
-            if (key.indexOf('Top') !== -1 && parseInt(key.replace('pipe', '')) % 2 === 0){
+            if (key.indexOf('Top') === -1 && parseInt(key.replace('pipe', '')) % 2 === 0){
+                let pipeIndex = parseInt(key.replace('pipe', ''));
+
                 // add Score counter logic
-                if (entities[key].body.position.x <= entities.character.position.x && !entities[key].scored){
+                if (entities[key].body.position.x < entities.character.body.position.x && !entities[key].scored){
                     entities[key].scored = true;
                     dispatch({ type: 'score'})
                 }
 
                 if (entities[key].body.position.x <= -1 * (Constants.PIPE_WIDTH / 2)){
-                    let pipeIndex = parseInt(key.replace('pipe', ''));
+                    addPipesLocation((Constants.MAX_WIDTH * 2) - (Constants.PIPE_WIDTH / 2), world, entities)
 
                     delete(entities['pipe' + (pipeIndex - 1) + 'Top']);
                     delete(entities['pipe' + (pipeIndex - 1)]);
                     delete(entities['pipe' + pipeIndex + 'Top']);
                     delete(entities['pipe' + pipeIndex]);
-                    
-                    addPipesLocation((Constants.MAX_WIDTH * 2) - (Constants.MAX_WIDTH / 2), world, entities);
                 }
             }
 
         } else if (key.indexOf("floor") === 0){
-            if (entities[key].body.position.x <= -1 * Constants.MAX_WIDTH / 2){
+            if (entities[key].body.position.x <= -1 * (Constants.MAX_WIDTH / 2)){
                 Matter.Body.setPosition(entities[key].body, {
                     x: Constants.MAX_WIDTH + (Constants.MAX_WIDTH / 2), 
                     y: entities[key].body.position.y});
@@ -160,6 +156,7 @@ const Physics = (entities, {touches, time, dispatch}) => {
             }
         }
     });
+    Matter.Engine.update(engine, time.delta);
 
     // animation of character if needed!!!
     tick += 1;
@@ -171,6 +168,7 @@ const Physics = (entities, {touches, time, dispatch}) => {
         entities.character.pose = pose;
     }
 
+    // bconsole.log(entities);
     return entities;
 };
 

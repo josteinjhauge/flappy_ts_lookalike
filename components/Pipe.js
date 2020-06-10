@@ -13,7 +13,7 @@ export default class Pipe extends Component {
 
         const pipeRatio = 160 / width; //160 is the size of the image, if other size on recived image change this variable
         const pipeHeight = 33 * pipeRatio;
-        const pipeIterations = Math.ceil(height / pipeeHeight);
+        const pipeIterations = Math.ceil(height / pipeHeight);
 
         return(
             <View
