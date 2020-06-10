@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
+
+const wall = require('../assets/stone.jpg') // TODO: change this line to change the design of the walls
+
+// TODO: also walls should be split up into different objects like obstecal, roof and floor
 
 export default class Wall extends Component {
     render(){
@@ -17,7 +21,13 @@ export default class Wall extends Component {
                 width: width,
                 height: height,
                 backgroundColor: this.props.color
-            }} />
+            }} >
+               <Image
+                    style={{width: width, height: height}}
+                    source={wall}
+                    resizeMode='stretch'
+                />
+            </View>
         )
     }
 }

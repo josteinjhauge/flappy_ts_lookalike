@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import { View } from 'react-native';
+import { View, Image} from 'react-native';
+
+const charecter = require('../assets/maleneTest.png') // TODO: change this line to change the design of the charecter
 
 export default class Charecter extends Component {
     render(){
@@ -10,14 +12,21 @@ export default class Charecter extends Component {
 
         return(
             <View
-            style={{
-                position: 'absolute',
-                top: y,
-                left: x,
-                width: width,
-                height: height,
-                backgroundColor: this.props.color
-            }} />
+                style={{
+                    position: 'absolute',
+                    top: y,
+                    left: x,
+                    width: width,
+                    height: height,
+                    backgroundColor: this.props.color
+                }}  
+            >
+                <Image
+                    style={{width: width, height: height}}
+                    source={charecter}
+                    resizeMode='stretch'
+                />
+            </View>
         )
     }
 }

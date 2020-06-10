@@ -7,7 +7,6 @@ import Constants from './components/Constants';
 import Charecter from './components/Charecter';
 import Wall from './components/Wall';
 import Physics from './components/Physics';
-import Score from './components/Score';
 
 export const randomSpace = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -24,6 +23,7 @@ export const makePipes = () => {
   return sizes;
 };
 
+
 export default class App extends Component {
   constructor(props){
     super(props);
@@ -31,8 +31,19 @@ export default class App extends Component {
     this.entities = this.setupWorld();
 
     this.state = {
+      score: 0,
       running: true
     }
+  }
+
+  // add function to increment score
+  incrementScore = () => {
+    while(this.state.running = true){
+
+    }
+    this.setState({
+      score: this.state.score + 1
+    })
   }
 
   setupWorld = () => {
@@ -61,7 +72,6 @@ export default class App extends Component {
     Matter.World.add(world,[charecter, floor, roof, pipe1, pipe2, pipe3, pipe4]);
 
     Matter.Events.on(engine, 'collisionStart', (event) => {
-        let pairs = event.pairs;
         this.gameEngine.dispatch({type: 'game-over'});
     });
 
@@ -83,7 +93,7 @@ export default class App extends Component {
         running: false
       })
       try{
-        console.log('Game Over')
+        console.log('Game Over' + ' ' + 'your score was: ' + this.state.score)
       }catch(e){
         console.log.error('something went wrong' + e)
       }
@@ -107,12 +117,15 @@ export default class App extends Component {
           systems={[Physics]}
           running={this.state.running}
           onEvent={this.onEvent}
-          entities={this.entities} >
+          entities={this.entities} 
+          score={this.state.score}>
           <StatusBar hidden={true}/>
+          <Text style={styles.scoreTextInGame}>{this.state.score}</Text>
         </GameEngine>
         {!this.state.running && <TouchableOpacity onPress={this.reset} style={styles.btnFullscreen}>
             <View style={styles.fullscreen}>
               <Text style={styles.gameOverText}>Game Over</Text>
+              <Text style={styles.scoreText}>Your score: {this.state.score}</Text>
             </View>
           </TouchableOpacity>}
       </View>
@@ -156,6 +169,17 @@ const styles = StyleSheet.create({
   gameOverText: {
     color: 'white',
     fontSize: 48
+  },
+  scoreText: {
+    color: 'white',
+    fontSize: 48
+  },
+  scoreTextInGame: {
+    top: '10%',
+    left: '40%',
+    color: 'black',
+    fontSize: 120,
+    fontWeight: 'bold',
   },
   body: {
     textAlign: 'center'
