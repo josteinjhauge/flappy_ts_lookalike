@@ -94,11 +94,12 @@ export const addPipesLocation = (x, world, entities) => {
 const Physics = (entities, {touches, time, dispatch}) => {
     let engine = entities.physics.engine;
     let world = entities.physics.world;
-    let charecter = entities.charecter.body;
+    let character = entities.character.body;
+    console.log(entities);
 
-    // Move charecter
+    // Move character
     let prevTouches = false; // to prevent multifingerPress
-    touches.filter(t => t.type === 'press').forEach(t => {
+    touches.filter(_t => _t.type === 'press').forEach(_t => {
         if(!prevTouches){
             if(world.gravity.y === 0.0){
                 // only applies to the first press where gravity is set to 0.0
@@ -111,8 +112,8 @@ const Physics = (entities, {touches, time, dispatch}) => {
             prevTouches = true;
             // Old physics
             // Matter.Body.applyForce( bird, bird.position, {x: 0.00, y: -0.05});
-            Matter.Body.setVelocity(charecter, {
-                x: charecter.velocity.x,
+            Matter.Body.setVelocity(character, {
+                x: character.velocity.x,
                 y: -10
             });
         }
@@ -129,7 +130,7 @@ const Physics = (entities, {touches, time, dispatch}) => {
         
             if (key.indexOf('Top') !== -1 && parseInt(key.replace('pipe', '')) % 2 === 0){
                 // add Score counter logic
-                if (entities[key].body.position.x <= entities.charecter.position.x && !entities[key].scored){
+                if (entities[key].body.position.x <= entities.character.position.x && !entities[key].scored){
                     entities[key].scored = true;
                     dispatch({ type: 'score'})
                 }
@@ -160,14 +161,14 @@ const Physics = (entities, {touches, time, dispatch}) => {
         }
     });
 
-    // animation of charecter if needed!!!
+    // animation of character if needed!!!
     tick += 1;
     if(tick % 5 === 0){
         pose = pose + 1;
         if (pose > 3){
             pose = 1;
         }
-        entities.charecter.pose = pose;
+        entities.character.pose = pose;
     }
 
     return entities;

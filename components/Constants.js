@@ -5,6 +5,6 @@ export default Constants = {
     MAX_HEIGHT: Dimensions.get('screen').height,
     GAP_SIZE: 200,
     PIPE_WIDTH: 100,
-    CHARECTER_WIDTH: 50,
-    CHARECTER_HEIGHT: 41
+    CHARACTER_WIDTH: 50,
+    CHARACTER_HEIGHT: 41
 }

@@ -7,8 +7,8 @@ export default Images = {
     pipeCore: require('./images/pipe_core.png'),
     // ObstacleTop should have size: 205x95
     pipeTop: require('./images/pipe_top.png'),
-    // Charecter image size: 120x99 
-    charecter1: require('./images/bird1.png'), // set inn charecter image 1
-    charecter2: require('./images/bird2.png'), // set inn charecter image 2
-    charecter3: require('./images/bird3.png'), // set inn charecter image 3
+    // Character image size: 120x99 
+    character1: require('./images/bird1.png'), // set inn character image 1
+    character2: require('./images/bird2.png'), // set inn character image 2
+    character3: require('./images/bird3.png'), // set inn character image 3
 }

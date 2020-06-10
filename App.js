@@ -4,7 +4,7 @@ import {GameEngine} from 'react-native-game-engine';
 import Matter from 'matter-js';
 
 import Constants from './components/Constants';
-import Charecter from './components/Charecter';
+import Character from './components/Character';
 import Physics, {resetPipes} from './components/Physics';
 import Floor from './components/Floor';
 import Images from './assets/Images';
@@ -28,7 +28,7 @@ export default class App extends Component {
     let world = engine.world;
     world.gravity.y = 0.0;
 
-    let charecter = Matter.Bodies.rectangle( Constants.MAX_WIDTH / 2, Constants.MAX_HEIGHT / 2, Constants.CHARECTER_WIDTH, Constants.CHARECTER_HEIGHT);
+    let character = Matter.Bodies.rectangle( Constants.MAX_WIDTH / 2, Constants.MAX_HEIGHT / 2, Constants.CHARACTER_WIDTH, Constants.CHARACTER_HEIGHT);
 
     let floor1 = Matter.Bodies.rectangle(
       Constants.MAX_WIDTH / 2,
@@ -46,7 +46,7 @@ export default class App extends Component {
       { isStatic: true }
     );
 
-    Matter.World.add(world, [charecter, floor1, floor2]);
+    Matter.World.add(world, [character, floor1, floor2]);
 
     Matter.Events.on(engine, 'collisionStart', (event) => {
       this.gameEngine.dispatch({type: 'game-over'});
@@ -54,7 +54,7 @@ export default class App extends Component {
 
     return {
       physics: {engine: engine, world: world },
-      charecter: {body: charecter, pose: 1, renderer: Charecter},
+      character: {body: character, pose: 1, renderer: Character},
       floor1: {body: floor1, renderer: Floor },
       floor2: {body: floor2, renderer: Floor },
     }

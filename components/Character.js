@@ -2,14 +2,14 @@ import React, {Component} from 'react';
 import { View, Image} from 'react-native';
 import Images from '../assets/Images';
 
-export default class Charecter extends Component {
+export default class Character extends Component {
     render(){
         const width = this.props.body.bounds.max.x - this.props.body.bounds.min.x;
         const height = this.props.body.bounds.max.y - this.props.body.bounds.min.y;
         const x = this.props.body.position.x - width / 2;
         const y = this.props.body.position.y -height / 2;
 
-        let charecterImage = Images['charecter' + this.props.pose];
+        let characterImage = Images['character' + this.props.pose];
         return(
                 <Image
                     style={{
@@ -19,7 +19,7 @@ export default class Charecter extends Component {
                         width: width,
                         height: height,
                     }}
-                    source={charecterImage}
+                    source={characterImage}
                     resizeMode='stretch'
                 />
         )
