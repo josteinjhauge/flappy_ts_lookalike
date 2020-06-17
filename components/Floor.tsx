@@ -2,8 +2,11 @@ import React from 'react';
 import { View, Image } from 'react-native';
 import Images from '../assets/Images';
 
+interface Props {
+    body: any;
+}
 
-const Floor = ({body}) => {
+const Floor: React.FC<Props> = ({body}) => {
         const width = body.bounds.max.x - body.bounds.min.x;
         const height = body.bounds.max.y - body.bounds.min.y;
 

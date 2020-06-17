@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import Images from '../assets/Images';
+import  Images from '../assets/Images';
 
+interface Props {
+    body: any;
+}
 
-const Pipe = ({body}) => {
+const Pipe: React.FC<Props> = ({body}) => {
         const width = body.bounds.max.x - body.bounds.min.x;
         const height = body.bounds.max.y - body.bounds.min.y;
         
@@ -26,12 +29,14 @@ const Pipe = ({body}) => {
                 overflow: 'hidden'
             }} >
                 {Array.apply(null, Array(pipeIterations)).map((el, idx) => {
-                    return <Image
-                    style={{width: width, height: pipeHeight}}
-                    source={Images.pipeCore}
-                    key={idx}
-                    resizeMode='stretch'
-                />
+                    return(
+                        <Image
+                            style={{width: width, height: pipeHeight}}
+                            source={Images.pipeCore}
+                            key={idx}
+                            resizeMode='stretch'
+                        />
+                    ) 
                 })} 
             </View>
         )

@@ -2,7 +2,13 @@ import React from 'react';
 import { Image } from 'react-native';
 import Images from '../assets/Images';
 
-const Character = ({body, pose}) => {
+
+interface Props {
+    body: any;
+    pose: any;
+}
+
+const Character: React.FC<Props> = ({body, pose}) => {
 
     const width = body.bounds.max.x - body.bounds.min.x;
     const height = body.bounds.max.y - body.bounds.min.y;

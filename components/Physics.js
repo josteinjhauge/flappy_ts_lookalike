@@ -99,7 +99,7 @@ const Physics = (entities, {touches, time, dispatch}) => {
 
     // Move character
     let hadTouches = false;
-touches.filter(t => t.type === "press").forEach(t => {
+    touches.filter(t => t.type === "press").forEach(t => {
     if (!hadTouches){
         if (world.gravity.y === 0.0){
             // first press really
