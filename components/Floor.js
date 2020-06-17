@@ -1,16 +1,14 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { View, Image } from 'react-native';
 import Images from '../assets/Images';
 
-// TODO: walls should be split up into different objects like obstecal, roof and floor
 
-export default class Floor extends Component {
-    render(){
-        const width = this.props.body.bounds.max.x - this.props.body.bounds.min.x;
-        const height = this.props.body.bounds.max.y - this.props.body.bounds.min.y;
+const Floor = ({body}) => {
+        const width = body.bounds.max.x - body.bounds.min.x;
+        const height = body.bounds.max.y - body.bounds.min.y;
 
-        const x = this.props.body.position.x - width / 2;
-        const y = this.props.body.position.y -height / 2;
+        const x = body.position.x - width / 2;
+        const y = body.position.y -height / 2;
 
         const imageIterations = Math.ceil(width / height);
 
@@ -35,5 +33,6 @@ export default class Floor extends Component {
                 })}
             </View>
         )
-    }
 }
+
+export default Floor;

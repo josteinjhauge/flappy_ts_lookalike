@@ -1,15 +1,14 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { View, Image } from 'react-native';
 import Images from '../assets/Images';
 
 
-export default class Pipe extends Component {
-    render(){
-        const width = this.props.body.bounds.max.x - this.props.body.bounds.min.x;
-        const height = this.props.body.bounds.max.y - this.props.body.bounds.min.y;
+const Pipe = ({body}) => {
+        const width = body.bounds.max.x - body.bounds.min.x;
+        const height = body.bounds.max.y - body.bounds.min.y;
         
-        const x = this.props.body.position.x - width / 2;
-        const y = this.props.body.position.y -height / 2;
+        const x = body.position.x - width / 2;
+        const y = body.position.y -height / 2;
 
         const pipeRatio = 160 / width; //160 is the size of the image, if other size on recived image change this variable
         const pipeHeight = 33 * pipeRatio;
@@ -36,5 +35,6 @@ export default class Pipe extends Component {
                 })} 
             </View>
         )
-    }
 }
+
+export default Pipe;
