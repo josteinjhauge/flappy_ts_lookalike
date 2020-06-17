@@ -158,7 +158,7 @@ touches.filter(t => t.type === "press").forEach(t => {
     });
     Matter.Engine.update(engine, time.delta);
 
-    // animation of character if needed!!!
+    // animation of character
     tick += 1;
     if(tick % 5 === 0){
         pose = pose + 1;

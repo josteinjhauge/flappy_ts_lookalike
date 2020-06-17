@@ -17,7 +17,7 @@ export default class App extends Component {
           score: 0,
           running: true,
         }
-
+        
     this.gameEngine = null;
 
     this.entities = this.setupWorld();
