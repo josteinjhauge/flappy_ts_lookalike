@@ -1,6 +1,6 @@
 import {Dimensions} from 'react-native';
 
-export default Constants = {
+const Constants = {
     MAX_WIDTH: Dimensions.get('screen').width,
     MAX_HEIGHT: Dimensions.get('screen').height,
     GAP_SIZE: 200,
@@ -8,3 +8,5 @@ export default Constants = {
     CHARACTER_WIDTH: 50,
     CHARACTER_HEIGHT: 41
 }
+
+export default Constants;
