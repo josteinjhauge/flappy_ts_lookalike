@@ -4,6 +4,8 @@ export default Images = {
     // Floor image should be a square
     floor: require('./images/stone.jpg'),
     // ObstacleCore should have the size 160
+    // TODO: add roof image
+    roof: require('./images/floor.png'),
     pipeCore: require('./images/pipe_core.png'),
     // ObstacleTop should have size: 205x95
     pipeTop: require('./images/pipe_top.png'),

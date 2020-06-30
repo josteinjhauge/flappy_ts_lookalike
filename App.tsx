@@ -14,6 +14,7 @@ import Constants from "./components/Constants";
 import Character from "./components/Character";
 import Physics, { resetPipes } from "./components/Physics";
 import Floor from "./components/Floor";
+import Roof from './components/Roof';
 import Images from "./assets/Images";
 
 interface Props {}
@@ -68,6 +69,16 @@ class App extends Component<Props, State> {
       { isStatic: true }
     );
 
+    // TODO: look into how to add roof to game to disable chating
+
+    let roof = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
+      Constants.MAX_HEIGHT - 50,
+      Constants.MAX_WIDTH + 4,
+      100,
+      { isStatic: true }
+    );
+
     Matter.World.add(world, [character, floor1, floor2]);
 
     Matter.Events.on(engine, "collisionStart", (event) => {
@@ -83,6 +94,7 @@ class App extends Component<Props, State> {
       character: { body: character, pose: 1, renderer: Character },
       floor1: { body: floor1, renderer: Floor },
       floor2: { body: floor2, renderer: Floor },
+      roof: {body: roof, renderer: Roof},
     };
   };
 
