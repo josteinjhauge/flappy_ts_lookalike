@@ -1,6 +1,6 @@
 
 export default Images = {
-    background: require('./images/background2.jpg'), // alter to actually use background image
+    background: require('./images/background3.png'), // alter to actually use background image
     // Floor image should be a square
     floor: require('./images/stone.jpg'),
     // ObstacleCore should have the size 160
@@ -10,7 +10,7 @@ export default Images = {
     // ObstacleTop should have size: 205x95
     pipeTop: require('./images/pipe_top.png'),
     // Character image size: 120x99 
-    character1: require('./images/spongebob.jpg'), // set inn character image 1
-    character2: require('./images/spongebob.jpg'), // set inn character image 2
-    character3: require('./images/spongebob.jpg'), // set inn character image 3
+    character1: require('./images/mario.png'), // set inn character image 1
+    character2: require('./images/mario.png'), // set inn character image 2
+    character3: require('./images/mario.png'), // set inn character image 3
 }
