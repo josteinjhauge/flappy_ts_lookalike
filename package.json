@@ -18,7 +18,8 @@
     "react-native": "^0.72.17",
     "react-native-game-engine": "^1.2.0",
     "react-native-web": "^0.19.6",
-    "start": "^5.1.0"
+    "start": "^5.1.0",
+    "@expo/metro-runtime": "~4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.9",
