@@ -5,7 +5,7 @@ import Images from '../assets/Images';
 
 interface Props {
     body: any;
-    pose: any;
+    pose: '1' | '2' | '3';
 }
 
 const Character: React.FC<Props> = ({body, pose}) => {
@@ -15,7 +15,7 @@ const Character: React.FC<Props> = ({body, pose}) => {
     const x = body.position.x - width / 2;
     const y = body.position.y -height / 2;
 
-    let characterImage = Images['character' + pose];
+    let characterImage = Images[`character${pose}`];
     return(
             <Image
                 style={{
