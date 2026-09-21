@@ -5,7 +5,6 @@ import {
   View,
   StatusBar,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import Matter from "matter-js";
@@ -15,7 +14,6 @@ import Character from "./components/Character";
 import Physics, { resetPhysics } from "./components/Physics";
 import Floor from "./components/Floor";
 import Roof from "./components/Roof";
-import Images from "./assets/Images";
 
 interface Props {}
 
@@ -119,11 +117,7 @@ class App extends Component<Props, State> {
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          source={Images.background}
-          style={styles.backgroundImage}
-          resizeMode="stretch"
-        />
+        <View style={styles.background} />
         <GameEngine
           ref={(ref) => {
             this.gameEngine = ref;
@@ -167,7 +161,7 @@ class App extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#0067ff",
   },
   gameContainer: {
     position: "absolute",
@@ -234,14 +228,13 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 2 },
     textShadowRadius: 2,
   },
-  backgroundImage: {
+  background: {
     position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    width: Constants.MAX_WIDTH,
-    height: Constants.MAX_HEIGHT,
+    backgroundColor: "#0067ff",
   },
 });
 

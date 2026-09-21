@@ -1,6 +1,5 @@
 import React from 'react';
-import { Image} from 'react-native';
-import Images from '../assets/Images';
+import { View } from 'react-native';
 
 interface Props {
     body: any;
@@ -13,16 +12,17 @@ const PipeTop: React.FC<Props> = ({body}) => {
     const y = body.position.y -height / 2;
 
     return(
-        <Image
+        <View
         style={{
             position: 'absolute',
             left: x,
             top: y,
             width: width,
-            height: height
+            height: height,
+            backgroundColor: '#ff0000',
+            borderColor: '#ffdf00',
+            borderWidth: 4,
         }}
-        resizeMode='stretch'
-        source={Images.pipeTop}
         />
     )
 }
