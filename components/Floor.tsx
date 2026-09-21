@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Image } from 'react-native';
-import Images from '../assets/Images';
+import { View } from 'react-native';
 
 interface Props {
     body: any;
@@ -13,8 +12,6 @@ const Floor: React.FC<Props> = ({body}) => {
         const x = body.position.x - width / 2;
         const y = body.position.y -height / 2;
 
-        const imageIterations = Math.ceil(width / height);
-
         return(
             <View
             style={{
@@ -23,18 +20,11 @@ const Floor: React.FC<Props> = ({body}) => {
                 left: x,
                 width: width,
                 height: height,
-                overflow: 'hidden',
-                flexDirection: 'row'
-            }} >
-                {Array.apply(null, Array(imageIterations)).map((el, idx) => {
-                    return <Image
-                    style={{width: width, height: height}} 
-                    key={idx} 
-                    source={Images.floor}
-                    resizeMode='stretch'
-                    />
-                })}
-            </View>
+                backgroundColor: '#ffdf00',
+                borderTopColor: '#ff0000',
+                borderTopWidth: 8,
+            }}
+            />
         )
 }
 

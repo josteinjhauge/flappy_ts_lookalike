@@ -5,17 +5,15 @@ import {
   View,
   StatusBar,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import Matter from "matter-js";
 
 import Constants from "./components/Constants";
 import Character from "./components/Character";
-import Physics, { resetPipes } from "./components/Physics";
+import Physics, { resetPhysics } from "./components/Physics";
 import Floor from "./components/Floor";
-import Roof from './components/Roof';
-import Images from "./assets/Images";
+import Roof from "./components/Roof";
 
 interface Props {}
 
@@ -28,7 +26,7 @@ class App extends Component<Props, State> {
   gameEngine: any;
   entities: any;
 
-  constructor(props: Component<Props>) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -36,92 +34,80 @@ class App extends Component<Props, State> {
       running: true,
     };
 
-
-    this.gameEngine = null
-    this.entities = this.setupWorld()
+    this.gameEngine = null;
+    this.entities = this.setupWorld();
   }
 
   setupWorld = () => {
-    let engine = Matter.Engine.create({ enableSleeping: false });
-    let world = engine.world;
+    const engine = Matter.Engine.create({
+      enableSleeping: false,
+      gravity: { x: 0, y: 0, scale: 0.001 },
+    });
+    const world = engine.world;
     world.gravity.y = 0.0;
 
-    let character = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH / 2,
+    const character = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH * 0.3,
       Constants.MAX_HEIGHT / 2,
       Constants.CHARACTER_WIDTH,
-      Constants.CHARACTER_HEIGHT
+      Constants.CHARACTER_HEIGHT,
+      { label: "bird" }
     );
 
-    let floor1 = Matter.Bodies.rectangle(
+    const floorY = Constants.MAX_HEIGHT - Constants.FLOOR_HEIGHT / 2;
+    const floor1 = Matter.Bodies.rectangle(
       Constants.MAX_WIDTH / 2,
-      Constants.MAX_HEIGHT - 25,
+      floorY,
       Constants.MAX_WIDTH + 4,
-      50,
-      { isStatic: true }
+      Constants.FLOOR_HEIGHT,
+      { isStatic: true, label: "floor" }
     );
 
-    let floor2 = Matter.Bodies.rectangle(
+    const floor2 = Matter.Bodies.rectangle(
       Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
-      Constants.MAX_HEIGHT - 25,
+      floorY,
       Constants.MAX_WIDTH + 4,
-      50,
-      { isStatic: true }
+      Constants.FLOOR_HEIGHT,
+      { isStatic: true, label: "floor" }
     );
 
-    // TODO: look into how to add roof to game to disable chating
-
-    let roof = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
-      Constants.MAX_HEIGHT - 50,
-      Constants.MAX_WIDTH + 4,
-      100,
-      { isStatic: true }
+    const roof = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH / 2,
+      -Constants.CEILING_HEIGHT / 2,
+      Constants.MAX_WIDTH,
+      Constants.CEILING_HEIGHT,
+      { isStatic: true, label: "ceiling" }
     );
 
-    Matter.World.add(world, [character, floor1, floor2]);
+    Matter.World.add(world, [character, floor1, floor2, roof]);
 
-    Matter.Events.on(engine, "collisionStart", (event) => {
-      try {
+    Matter.Events.on(engine, "collisionStart", () => {
+      if (this.state.running && this.gameEngine) {
         this.gameEngine.dispatch({ type: "game-over" });
-      } catch (error) {
-        console.log("error gameengine = null");
       }
     });
 
     return {
-      physics: { engine: engine, world: world },
+      physics: { engine, world },
       character: { body: character, pose: 1, renderer: Character },
       floor1: { body: floor1, renderer: Floor },
       floor2: { body: floor2, renderer: Floor },
-      roof: {body: roof, renderer: Roof},
+      roof: { body: roof, renderer: Roof },
     };
   };
 
   onEvent = (e: any) => {
     if (e.type === "game-over") {
-      try {
-        this.setState({
-          running: false,
-        });
-        console.log("Game Over" + " " + "your score was: " + this.state.score);
-      } catch (error) {
-        console.log("something went wrong" + error);
-      }
+      this.setState({ running: false });
     } else if (e.type === "score") {
-      try {
-        this.setState({
-          score: this.state.score + 1,
-        });
-      } catch (error) {
-        console.log("Registration of score failed" + error);
-      }
+      this.setState((state) => ({ score: state.score + 1 }));
     }
   };
 
   reset = () => {
-    resetPipes();
-    this.gameEngine.swap(this.setupWorld());
+    resetPhysics();
+    this.entities = this.setupWorld();
+    this.gameEngine.swap(this.entities);
     this.setState({
       running: true,
       score: 0,
@@ -131,13 +117,11 @@ class App extends Component<Props, State> {
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          source={Images.background}
-          style={styles.backgroundImage}
-          resizeMode="stretch"
-        />
+        <View style={styles.background} />
         <GameEngine
-          ref={(ref) => this.gameEngine = ref}
+          ref={(ref) => {
+            this.gameEngine = ref;
+          }}
           style={styles.gameContainer}
           systems={[Physics]}
           running={this.state.running}
@@ -146,15 +130,26 @@ class App extends Component<Props, State> {
         >
           <StatusBar hidden={true} />
         </GameEngine>
-        <Text style={styles.scoreTextInGame}>{this.state.score}</Text>
+        <View pointerEvents="none" style={styles.hud}>
+          <Text style={styles.scoreTextInGame}>{this.state.score}</Text>
+          {this.state.running && (
+            <Text style={styles.instructionText}>Tap to fly</Text>
+          )}
+        </View>
         {!this.state.running && (
-          <TouchableOpacity onPress={this.reset} style={styles.btnFullscreen}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Play again"
+            activeOpacity={0.9}
+            onPress={this.reset}
+            style={styles.btnFullscreen}
+          >
             <View style={styles.fullscreen}>
               <Text style={styles.gameOverText}>Game Over</Text>
               <Text style={styles.scoreText}>
                 Your score: {this.state.score}
               </Text>
-              <Text style={styles.tryAgainText}>Try Again</Text>
+              <Text style={styles.tryAgainText}>Tap to try again</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -166,7 +161,7 @@ class App extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#0067ff",
   },
   gameContainer: {
     position: "absolute",
@@ -189,41 +184,57 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "black",
-    opacity: 0.6,
+    backgroundColor: "rgba(0, 0, 0, 0.72)",
     justifyContent: "center",
     alignItems: "center",
   },
   gameOverText: {
     color: "white",
-    fontSize: 48,
+    fontSize: 44,
+    fontWeight: "800",
   },
   tryAgainText: {
-    color: "white",
-    fontSize: 48,
+    color: "#f7df1e",
+    fontSize: 24,
+    fontWeight: "700",
+    marginTop: 28,
   },
   scoreText: {
     color: "white",
-    fontSize: 48,
+    fontSize: 28,
+    marginTop: 12,
+  },
+  hud: {
+    position: "absolute",
+    top: 52,
+    left: 0,
+    right: 0,
+    alignItems: "center",
   },
   scoreTextInGame: {
-    top: "10%",
-    left: "40%",
-    color: "black",
-    fontSize: 120,
-    fontWeight: "bold",
+    color: "white",
+    fontSize: 64,
+    fontWeight: "900",
+    textShadowColor: "rgba(0, 0, 0, 0.55)",
+    textShadowOffset: { width: 2, height: 3 },
+    textShadowRadius: 2,
   },
-  body: {
-    textAlign: "center",
+  instructionText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 4,
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 2,
   },
-  backgroundImage: {
+  background: {
     position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    width: Constants.MAX_WIDTH,
-    height: Constants.MAX_HEIGHT,
+    backgroundColor: "#0067ff",
   },
 });
 

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
-import Images from '../assets/Images';
+import { View } from 'react-native';
 
 
 interface Props {
@@ -15,19 +14,44 @@ const Character: React.FC<Props> = ({body, pose}) => {
     const x = body.position.x - width / 2;
     const y = body.position.y -height / 2;
 
-    let characterImage = Images[`character${pose}`];
+    const wingOffset = pose === '2' ? height * 0.12 : height * 0.42;
+
     return(
-            <Image
+            <View
                 style={{
                     position: 'absolute',
                     left: x,
                     top: y,
                     width: width,
                     height: height,
+                    borderRadius: height / 2,
+                    backgroundColor: '#ffdf00',
+                    borderColor: '#ff0000',
+                    borderWidth: 4,
                 }}
-                source={characterImage}
-                resizeMode='stretch'
-            />
+            >
+                <View
+                    style={{
+                        position: 'absolute',
+                        left: -width * 0.12,
+                        top: wingOffset,
+                        width: width * 0.48,
+                        height: height * 0.34,
+                        borderRadius: height,
+                        backgroundColor: '#0067ff',
+                    }}
+                />
+                <View
+                    style={{
+                        position: 'absolute',
+                        right: -width * 0.2,
+                        top: height * 0.35,
+                        width: width * 0.35,
+                        height: height * 0.22,
+                        backgroundColor: '#ff0000',
+                    }}
+                />
+            </View>
     )
     
 }
