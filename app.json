@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "game2",
-    "slug": "game2",
+    "name": "Flappy Clone",
+    "slug": "flappy-clone",
     "platforms": [
       "ios",
       "android",

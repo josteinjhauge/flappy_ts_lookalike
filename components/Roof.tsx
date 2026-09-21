@@ -28,7 +28,7 @@ const Roof: React.FC<Props> = ({body}) => {
             }} >
                 {Array.apply(null, Array(imageIterations)).map((el, idx) => {
                     return <Image
-                    style={{width: width, height: height}} 
+                    style={{width: height, height: height}}
                     key={idx} 
                     source={Images.roof}
                     resizeMode='stretch'

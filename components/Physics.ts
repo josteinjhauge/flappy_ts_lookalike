@@ -11,68 +11,67 @@ export const randomSpace = (min: number, max: number): number => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const resetPipes = (): void => {
+export const resetPhysics = (): void => {
+    tick = 0;
+    pose = 1;
     pipes = 0;
 }
 
 export const generatePipes = (): number[] => {
-    let topPipeHeight = randomSpace(100, (Constants.MAX_HEIGHT / 2) - 100);
-    let bottomPipeHeight = Constants.MAX_HEIGHT - topPipeHeight - Constants.GAP_SIZE - 50;
+    const playableHeight = Constants.MAX_HEIGHT - Constants.FLOOR_HEIGHT;
+    const minimumPipeHeight = 80;
+    const maximumTopHeight = playableHeight - Constants.GAP_SIZE - minimumPipeHeight;
+    const topPipeHeight = randomSpace(minimumPipeHeight, maximumTopHeight);
+    const bottomPipeHeight = playableHeight - topPipeHeight - Constants.GAP_SIZE;
 
-    let sizes = [topPipeHeight, bottomPipeHeight];
-
-    if (Math.random() < 0.5) {
-        sizes = sizes.reverse();
-    }
-
-    return sizes;
+    return [topPipeHeight, bottomPipeHeight];
 }
 
 export const addPipesLocation = (x: number, world: Matter.World, entities: any): void => {
-    let [pipe1Height, pipe2Height] = generatePipes();
+    const [topHeight, bottomHeight] = generatePipes();
+    const pipeTopWidth = Constants.PIPE_WIDTH + 20;
+    const pipeTopHeight = (pipeTopWidth / 205) * 95;
+    const pipe1Height = topHeight - pipeTopHeight;
 
-    let pipeTopWidth = Constants.PIPE_WIDTH + 20;
-    let pipeTopHeight = (pipeTopWidth / 205) * 95; // original image size is 205x95
-
-    pipe1Height = pipe1Height - pipeTopHeight;
-
-    let pipe1Top = Matter.Bodies.rectangle(
+    const pipe1Top = Matter.Bodies.rectangle(
         x,
-        pipe1Height + (pipeTopHeight / 2),
+        topHeight - pipeTopHeight / 2,
         pipeTopWidth,
         pipeTopHeight,
-        { isStatic: true }
+        { isStatic: true, label: "pipe" }
     );
 
-    let pipe1 = Matter.Bodies.rectangle(
+    const pipe1 = Matter.Bodies.rectangle(
         x,
         pipe1Height / 2,
         Constants.PIPE_WIDTH,
         pipe1Height,
-        { isStatic: true }
+        { isStatic: true, label: "pipe" }
     );
 
-    pipe2Height = pipe2Height - pipeTopHeight;
+    const pipe2Height = bottomHeight - pipeTopHeight;
+    const floorTop = Constants.MAX_HEIGHT - Constants.FLOOR_HEIGHT;
 
-    let pipe2Top = Matter.Bodies.rectangle(
+    const pipe2Top = Matter.Bodies.rectangle(
         x,
-        Constants.MAX_HEIGHT - pipe2Height - 50 - (pipeTopHeight / 2),
+        floorTop - bottomHeight + pipeTopHeight / 2,
         pipeTopWidth,
         pipeTopHeight,
-        { isStatic: true }
+        { isStatic: true, label: "pipe" }
     );
 
-    let pipe2 = Matter.Bodies.rectangle(
+    const pipe2 = Matter.Bodies.rectangle(
         x,
-        Constants.MAX_HEIGHT - (pipe2Height / 2) - 50,
-        Constants.PIPE_WIDTH, pipe2Height,
-        { isStatic: true }
+        floorTop - pipe2Height / 2,
+        Constants.PIPE_WIDTH,
+        pipe2Height,
+        { isStatic: true, label: "pipe" }
     );
 
     Matter.World.add(world, [pipe1, pipe1Top, pipe2, pipe2Top]);
 
     entities['pipe' + (pipes + 1)] = {
-        body: pipe1, renderer: Pipe, scored: false
+        body: pipe1, renderer: Pipe
     }
 
     entities['pipe' + (pipes + 2)] = {
@@ -80,11 +79,11 @@ export const addPipesLocation = (x: number, world: Matter.World, entities: any):
     }
 
     entities['pipe' + (pipes + 1) + 'Top'] = {
-        body: pipe1Top, renderer: PipeTop, scored: false
+        body: pipe1Top, renderer: PipeTop
     }
 
     entities['pipe' + (pipes + 2) + 'Top'] = {
-        body: pipe2Top, renderer: PipeTop, scored: false
+        body: pipe2Top, renderer: PipeTop
     }
 
     pipes += 2;
@@ -106,15 +105,15 @@ const Physics = (entities: any, { touches, time, dispatch }: PhysicsProps): any 
     touches.filter(t => t.type === "press").forEach(t => {
         if (!hadTouches) {
             if (world.gravity.y === 0.0) {
-                world.gravity.y = 1.2;
-                addPipesLocation((Constants.MAX_WIDTH * 2) - (Constants.PIPE_WIDTH / 2), world, entities);
-                addPipesLocation((Constants.MAX_WIDTH * 3) - (Constants.PIPE_WIDTH / 2), world, entities);
+                world.gravity.y = 1.15;
+                addPipesLocation(Constants.MAX_WIDTH + Constants.PIPE_WIDTH, world, entities);
+                addPipesLocation(Constants.MAX_WIDTH * 1.75 + Constants.PIPE_WIDTH, world, entities);
             }
             hadTouches = true;
             // Old method: Matter.Body.applyForce( bird, bird.position, {x: 0.00, y: -0.05});
             Matter.Body.setVelocity(character, {
                 x: character.velocity.x,
-                y: -8.5
+                y: Constants.FLAP_VELOCITY
             });
         }
     });
@@ -122,7 +121,7 @@ const Physics = (entities: any, { touches, time, dispatch }: PhysicsProps): any 
     Object.keys(entities).forEach(key => {
         if (key.indexOf('pipe') === 0 && entities.hasOwnProperty(key)) {
             Matter.Body.translate(entities[key].body, {
-                x: -2,
+                x: -Constants.PIPE_SPEED,
                 y: 0
             });
 
@@ -136,12 +135,18 @@ const Physics = (entities: any, { touches, time, dispatch }: PhysicsProps): any 
                 }
 
                 if (entities[key].body.position.x <= -1 * (Constants.PIPE_WIDTH / 2)) {
-                    addPipesLocation((Constants.MAX_WIDTH * 2) - (Constants.PIPE_WIDTH / 2), world, entities)
+                    addPipesLocation(Constants.MAX_WIDTH * 1.5, world, entities)
 
-                    delete (entities['pipe' + (pipeIndex - 1) + 'Top']);
-                    delete (entities['pipe' + (pipeIndex - 1)]);
-                    delete (entities['pipe' + pipeIndex + 'Top']);
-                    delete (entities['pipe' + pipeIndex]);
+                    const staleKeys = [
+                        'pipe' + (pipeIndex - 1) + 'Top',
+                        'pipe' + (pipeIndex - 1),
+                        'pipe' + pipeIndex + 'Top',
+                        'pipe' + pipeIndex,
+                    ];
+                    staleKeys.forEach(staleKey => {
+                        Matter.World.remove(world, entities[staleKey].body);
+                        delete entities[staleKey];
+                    });
                 }
             }
 
@@ -153,7 +158,7 @@ const Physics = (entities: any, { touches, time, dispatch }: PhysicsProps): any 
                 });
             } else {
                 Matter.Body.translate(entities[key].body, {
-                    x: -2,
+                    x: -Constants.PIPE_SPEED,
                     y: 0
                 });
             }
